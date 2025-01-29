@@ -1,16 +1,35 @@
 #!/bin/bash
 
-# How to Use : 
+# How to Use Locally From root folder:
+# 
 ## Create a Feature
 #### ./fca_shell.sh create <feature_name>
 ## Install Dependencies
 #### ./fca_shell.sh install
+#### ./fca_shell.sh install <dependencies_name>
 ## Check Logs
 #### cat fca_shell.log
 
+# How to use with git bash :
+## from git bash run
+### nano ~/.bashrc
+## then add this line at the bottom of the file
+### alias fca='curl -s https://raw.githubusercontent.com/your-username/your-repo/main/fca_shell.sh | bash -s'
+## Save the file (CTRL + X, then Y, then ENTER).
+## Reload the shell to apply the changes:
+### source ~/.bashrc
+
+## Create a Feature
+# fca create <feature_name>
+## Install Dependencies
+# fca install
+# fca install <dependencies_name>
+
+# Current default dependencies = "flutter_bloc" "go_router" "get_it" "dio" "fpdart"
+
 LOG_FILE="fca_shell.log"
 
-# Function to log messages (new logs appear at the top)
+# Function to log messages (latest logs at the top)
 log() {
   TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
   NEW_LOG="$TIMESTAMP - $1"
@@ -23,6 +42,30 @@ log() {
     mv "$TEMP_FILE" "$LOG_FILE"
   fi
   echo "$NEW_LOG"
+}
+
+# Function to install dependencies
+install_dependencies() {
+  # Default dependencies
+  local default_deps=("flutter_bloc" "go_router" "get_it" "dio" "fpdart")
+
+  # If no extra dependencies are provided, install only the default ones
+  if [[ $# -eq 0 ]]; then
+    dependencies=("${default_deps[@]}")
+  else
+    dependencies=("$@") # Install only user-specified dependencies
+  fi
+
+  for dep in "${dependencies[@]}"; do
+    if ! flutter pub deps | grep -q "$dep"; then
+      echo "Installing $dep..."
+      flutter pub add "$dep"
+      log "Installed dependency: $dep"
+    else
+      echo "$dep is already installed."
+      log "$dep is already installed."
+    fi
+  done
 }
 
 # Function to create a feature
@@ -47,7 +90,6 @@ create_feature() {
     "$FEATURE_PATH/presentation/pages"
   )
 
-  # Create folders
   for FOLDER in "${FOLDERS[@]}"; do
     mkdir -p "$FOLDER"
     log "Created: $FOLDER"
@@ -162,39 +204,21 @@ EOT
   log "Feature structure for '$FEATURE_NAME' created successfully!"
 }
 
-# Function to install dependencies
-install_dependencies() {
-  DEPENDENCIES=("flutter_bloc" "go_router" "get_it" "dio" "fpdart")
-
-  log "Starting dependency installation..."
-
-  for DEP in "${DEPENDENCIES[@]}"; do
-    if flutter pub deps | grep -q "$DEP"; then
-      log "$DEP is already installed."
-    else
-      log "Installing $DEP..."
-      flutter pub add "$DEP" >> "$LOG_FILE" 2>&1
-      if [ $? -eq 0 ]; then
-        log "Successfully installed: $DEP"
-      else
-        log "Error installing: $DEP"
-      fi
-    fi
-  done
-
-  log "Dependency installation complete!"
-}
-
 # Main script logic
-if [ "$1" == "create" ]; then
-  if [ -z "$2" ]; then
-    log "Error: No feature name provided. Usage: ./fca_shell.sh create <feature_name>"
+case "$1" in
+  "install")
+    shift
+    install_dependencies "$@"
+    ;;
+  "create")
+    if [ -z "$2" ]; then
+      log "Error: No feature name provided. Usage: ./fca_shell.sh create <feature_name>"
+      exit 1
+    fi
+    create_feature "$2"
+    ;;
+  *)
+    log "Error: Invalid command. Use './fca_shell.sh create <feature_name>' or './fca_shell.sh install [dependencies]'"
     exit 1
-  fi
-  create_feature "$2"
-elif [ "$1" == "install" ]; then
-  install_dependencies
-else
-  log "Error: Invalid command. Use './fca_shell.sh create <feature_name>' or './fca_shell.sh install'"
-  exit 1
-fi
+    ;;
+esac
