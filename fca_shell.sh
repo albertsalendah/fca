@@ -88,6 +88,7 @@ create_feature() {
     "$FEATURE_PATH/domain/usecases"
     "$FEATURE_PATH/presentation/blocs"
     "$FEATURE_PATH/presentation/pages"
+    "$FEATURE_PATH/presentation/widgets"
   )
 
   for FOLDER in "${FOLDERS[@]}"; do
