@@ -77,6 +77,8 @@ create_feature() {
   log "Starting feature creation: $FEATURE_NAME"
 
   FOLDERS=(
+	"lib/config/routes"
+	"lib/config/theme"
     "lib/core/errors"
 	"lib/core/usecase"
     "lib/core/utils/services"
@@ -95,6 +97,106 @@ create_feature() {
     mkdir -p "$FOLDER"
     log "Created: $FOLDER"
   done
+  
+  # Config files 
+  if [ ! -f lib/config/routes/routes.dart ]; then
+    cat <<EOT >lib/config/routes/routes.dart
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'routes_name.dart';
+
+final GoRouter router = GoRouter(
+    initialLocation: "/",
+    errorBuilder: (context, state) {
+      return Scaffold(
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(child: Text(state.error.toString())),
+          ],
+        ),
+      );
+    },
+    // redirect: (context, state) {
+    // bool isLogin = false;
+    // if (isLogin) {
+    //   return "/home";
+    // } else {
+    //   return "/";
+    // }
+    // },
+    routes: [
+      GoRoute(
+          path: "/",
+          name: RoutesName.home,
+          builder: (context, state) {
+            return const HomePage();
+          },
+          routes: []),
+    ]);
+EOT
+    log "Created: lib/config/routes/routes.dart"
+  fi
+  
+  if [ ! -f lib/config/routes/routes_name.dart ]; then
+    cat <<EOT >lib/config/routes/routes_name.dart
+class RoutesName {
+  static const String home = 'home_page';
+}
+EOT
+    log "Created: lib/config/routes/routes_name.dart"
+  fi
+  
+  if [ ! -f lib/config/theme/theme.dart ]; then
+    cat <<EOT >lib/config/theme/theme.dart
+import 'package:flutter/material.dart';
+import 'app_pallet.dart';
+
+class AppTheme {
+  static _border([Color color = AppPallete.borderColor]) => OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: color, width: 3),
+      );
+
+  static final darkThemeMode = ThemeData.dark().copyWith(
+      scaffoldBackgroundColor: AppPallete.backgroundColor,
+      appBarTheme: const AppBarTheme(
+        backgroundColor: AppPallete.backgroundColor,
+        elevation: 0,
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        contentPadding: const EdgeInsets.all(27),
+        hintStyle: TextStyle(
+          color: AppPallete.greyColor,
+        ),
+        border: _border(),
+        enabledBorder: _border(),
+        focusedBorder: _border(AppPallete.gradient2),
+      ));
+}
+
+EOT
+    log "Created: lib/config/theme/theme.dart"
+  fi
+  
+  if [ ! -f lib/config/theme/app_pallet.dart ]; then
+    cat <<EOT >lib/config/theme/app_pallet.dart
+import 'package:flutter/material.dart';
+
+class AppPallete {
+  static const Color backgroundColor = Color.fromRGBO(24, 24, 32, 1);
+  static const Color gradient1 = Color.fromRGBO(187, 63, 221, 1);
+  static const Color gradient2 = Color.fromRGBO(251, 109, 169, 1);
+  static const Color gradient3 = Color.fromRGBO(255, 159, 124, 1);
+  static const Color borderColor = Color.fromRGBO(52, 51, 67, 1);
+  static const Color whiteColor = Colors.white;
+  static const Color greyColor = Colors.grey;
+  static const Color errorColor = Colors.redAccent;
+  static const Color transparentColor = Colors.transparent;
+}
+EOT
+    log "Created: lib/config/theme/app_pallet.dart"
+  fi
 
   # Core files
   if [ ! -f lib/core/errors/failure.dart ]; then
@@ -134,6 +236,7 @@ abstract interface class UseCase<Type, Params> {
 }
 EOT
     log "Created: lib/core/usecase/usecase.dart"
+  fi  	
 
   if [ ! -f lib/core/utils/constants.dart ]; then
     cat <<EOT >lib/core/utils/constants.dart
@@ -159,11 +262,11 @@ EOT
   # Feature-specific files
   cat <<EOT >$FEATURE_PATH/data/datasources/${FEATURE_NAME}_remote_data_source.dart
 abstract interface class ${FEATURE_CLASS_NAME}RemoteDataSource {
-  // TODO: Implement remote data source
+  
 }
 
 class ${FEATURE_CLASS_NAME}RemoteDataSourceImpl implements ${FEATURE_CLASS_NAME}RemoteDataSource {
-  
+  // TODO: Implement remote data source
 }
 EOT
   log "Created: $FEATURE_PATH/data/datasources/${FEATURE_NAME}_remote_data_source.dart"
@@ -201,7 +304,7 @@ import '../../../../core/errors/failure.dart';
 import '../../../../core/usecase/usecase.dart';
 import 'package:fpdart/fpdart.dart';
 
-class Get${FEATURE_CLASS_NAME} extends UseCase<String, ${FEATURE_CLASS_NAME}Params> {
+class Get${FEATURE_CLASS_NAME} implements UseCase<String, ${FEATURE_CLASS_NAME}Params> {
   @override
   Future<Either<Failure, String>> call(${FEATURE_CLASS_NAME}Params params) async {
     // TODO: implement call
@@ -210,12 +313,12 @@ class Get${FEATURE_CLASS_NAME} extends UseCase<String, ${FEATURE_CLASS_NAME}Para
 }
 
 class ${FEATURE_CLASS_NAME}Params {
-  final String name;
-  final String email;
-  final String password;
+  final String test1;
+  final String test2;
+  final String test3;
 
   ${FEATURE_CLASS_NAME}Params(
-      {required this.name, required this.email, required this.password});
+      {required this.test1, required this.test2, required this.test3});
 }
 EOT
   log "Created: $FEATURE_PATH/domain/usecases/get_${FEATURE_NAME}.dart"
@@ -231,7 +334,7 @@ EOT
   log "Created: $FEATURE_PATH/presentation/pages/${FEATURE_NAME}_page.dart"
 
   log "Feature structure for '$FEATURE_NAME' created successfully!"
-}
+  }
 
 # Main script logic
 case "$1" in
