@@ -47,7 +47,7 @@ log() {
 # Function to install dependencies
 install_dependencies() {
   # Default dependencies
-  local default_deps=("flutter_bloc" "go_router" "get_it" "dio" "fpdart")
+  local default_deps=("flutter_dotenv" "flutter_bloc" "go_router" "get_it" "dio" "fpdart")
 
   # If no extra dependencies are provided, install only the default ones
   if [[ $# -eq 0 ]]; then
@@ -336,6 +336,70 @@ EOT
   log "Feature structure for '$FEATURE_NAME' created successfully!"
   }
 
+create_env_file() {
+  if [ ! -f .env ]; then
+    cat <<EOT >.env
+# how to use dotenv.env['VAR_NAME']; 
+
+API_URL="https://api.example.com"
+EOT
+    log "Created .env file with default API_URL."
+  else
+    log ".env file already exists."
+  fi
+}
+
+# Function to modify lib/main.dart
+modify_main_dart() {
+  MAIN_DART_FILE="lib/main.dart"
+
+  if [ ! -f "$MAIN_DART_FILE" ]; then
+    log "lib/main.dart not found. Creating a new one..."
+    mkdir -p lib  # Ensure the lib folder exists
+    cat <<EOT >$MAIN_DART_FILE
+import 'core/routes/routes.dart';
+import 'core/theme/theme.dart';
+import 'package:blog_app/core/theme/theme.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      title: 'Demo App',
+      theme: AppTheme.darkThemeMode,
+      routerConfig: router,
+    );
+  }
+}
+
+EOT
+    log "Created lib/main.dart with dotenv support."
+  else
+    log "Modifying existing lib/main.dart to include dotenv support."
+    # Insert dotenv import if not present
+    if ! grep -q "flutter_dotenv/flutter_dotenv.dart" "$MAIN_DART_FILE"; then
+      sed -i '1i import "package:flutter_dotenv/flutter_dotenv.dart";' "$MAIN_DART_FILE"
+    fi
+
+    # Insert dotenv initialization before runApp()
+    if ! grep -q "await dotenv.load();" "$MAIN_DART_FILE"; then
+      sed -i '/void main()/a\  await dotenv.load();' "$MAIN_DART_FILE"
+    fi
+
+    log "Updated lib/main.dart with dotenv support."
+  fi
+}
+
 # Main script logic
 case "$1" in
   "install")
@@ -349,8 +413,14 @@ case "$1" in
     fi
     create_feature "$2"
     ;;
+  ".env")
+    create_env_file
+    ;;
+  "main")
+    modify_main_dart
+    ;;
   *)
-    log "Error: Invalid command. Use './fca_shell.sh create <feature_name>' or './fca_shell.sh install [dependencies]'"
+    log "Error: Invalid command. Use './fca_shell.sh create <feature_name>', './fca_shell.sh install [dependencies]', or './fca_shell.sh .env'"
     exit 1
     ;;
 esac
