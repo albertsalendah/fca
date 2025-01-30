@@ -231,7 +231,6 @@ EOT
   log "Created: $FEATURE_PATH/presentation/pages/${FEATURE_NAME}_page.dart"
 
   log "Feature structure for '$FEATURE_NAME' created successfully!"
-}
 
 # Main script logic
 case "$1" in
