@@ -134,7 +134,7 @@ abstract interface class UseCase<Type, Params> {
 }
 EOT
     log "Created: lib/core/usecase/usecase.dart"
-
+fi
   if [ ! -f lib/core/utils/constants.dart ]; then
     cat <<EOT >lib/core/utils/constants.dart
 const String baseUrl = "https://api.example.com";
@@ -231,7 +231,7 @@ EOT
   log "Created: $FEATURE_PATH/presentation/pages/${FEATURE_NAME}_page.dart"
 
   log "Feature structure for '$FEATURE_NAME' created successfully!"
-
+}
 # Main script logic
 case "$1" in
   "install")
