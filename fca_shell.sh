@@ -353,10 +353,19 @@ EOT
 modify_main_dart() {
   MAIN_DART_FILE="lib/main.dart"
 
-  if [ ! -f "$MAIN_DART_FILE" ]; then
-    log "lib/main.dart not found. Creating a new one..."
-    mkdir -p lib  # Ensure the lib folder exists
-    cat <<EOT >$MAIN_DART_FILE
+  log "Setting up lib/main.dart..."
+
+  # Ensure the lib directory exists
+  mkdir -p lib  
+
+  # If main.dart exists, delete it first
+  if [ -f "$MAIN_DART_FILE" ]; then
+    log "Found existing lib/main.dart. Deleting it..."
+    rm "$MAIN_DART_FILE"
+  fi
+
+  # Create a new main.dart file with dotenv support
+  cat <<EOT >"$MAIN_DART_FILE"
 import 'core/routes/routes.dart';
 import 'core/theme/theme.dart';
 import 'package:blog_app/core/theme/theme.dart';
@@ -381,24 +390,11 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
 EOT
-    log "Created lib/main.dart with dotenv support."
-  else
-    log "Modifying existing lib/main.dart to include dotenv support."
-    # Insert dotenv import if not present
-    if ! grep -q "flutter_dotenv/flutter_dotenv.dart" "$MAIN_DART_FILE"; then
-      sed -i '1i import "package:flutter_dotenv/flutter_dotenv.dart";' "$MAIN_DART_FILE"
-    fi
 
-    # Insert dotenv initialization before runApp()
-    if ! grep -q "await dotenv.load();" "$MAIN_DART_FILE"; then
-      sed -i '/void main()/a\  await dotenv.load();' "$MAIN_DART_FILE"
-    fi
-
-    log "Updated lib/main.dart with dotenv support."
-  fi
+  log "Created lib/main.dart with dotenv support."
 }
+
 
 # Main script logic
 case "$1" in
