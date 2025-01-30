@@ -366,10 +366,9 @@ modify_main_dart() {
 
   # Create a new main.dart file with dotenv support
   cat <<EOT >"$MAIN_DART_FILE"
-import 'core/routes/routes.dart';
-import 'core/theme/theme.dart';
-import 'package:blog_app/core/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'config/routes/routes.dart';
+import 'config/theme/theme.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
