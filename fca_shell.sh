@@ -78,7 +78,11 @@ create_feature() {
 
   FOLDERS=(
     "lib/core/errors"
+<<<<<<< HEAD
+    "lib/core/usecase"
+=======
     "lib/core/usecases"
+>>>>>>> origin/main
     "lib/core/utils/services"
     "$FEATURE_PATH/data/datasources"
     "$FEATURE_PATH/data/models"
@@ -86,7 +90,11 @@ create_feature() {
     "$FEATURE_PATH/domain/entities"
     "$FEATURE_PATH/domain/repositories"
     "$FEATURE_PATH/domain/usecases"
+<<<<<<< HEAD
+    "$FEATURE_PATH/presentation/bloc"
+=======
     "$FEATURE_PATH/presentation/blocs"
+>>>>>>> origin/main
     "$FEATURE_PATH/presentation/pages"
     "$FEATURE_PATH/presentation/widgets"
   )
@@ -99,9 +107,15 @@ create_feature() {
   # Core files
   if [ ! -f lib/core/errors/failure.dart ]; then
     cat <<EOT >lib/core/errors/failure.dart
+<<<<<<< HEAD
+class Failure {
+  final String message;
+  Failure([this.message = 'An unexpected error occured' ]);
+=======
 abstract class Failure {
   final String message;
   Failure(this.message);
+>>>>>>> origin/main
 }
 class NetworkFailure extends Failure {
   NetworkFailure(super.message);
@@ -113,6 +127,29 @@ class ServerFailure extends Failure {
 EOT
     log "Created: lib/core/errors/failure.dart"
   fi
+<<<<<<< HEAD
+  
+  if [ ! -f lib/core/errors/exceptions.dart ]; then
+    cat <<EOT >lib/core/errors/exceptions.dart
+class ServerException implements Exception {
+  final String message;
+  const ServerException(this.message);
+}
+EOT
+    log "Created: lib/core/errors/exceptions.dart"
+  fi
+
+  if [ ! -f lib/core/usecase/usecase.dart ]; then
+    cat <<EOT >lib/core/usecase/usecase.dart
+import 'package:fpdart/fpdart.dart';
+import '../errors/failure.dart';
+
+abstract interface class UseCase<Type, Params> {
+  Future<Either<Failure, Type>> call(Params params);
+}
+EOT
+    log "Created: lib/core/usecase/usecase.dart"
+=======
 
   if [ ! -f lib/core/usecases/usecase.dart ]; then
     cat <<EOT >lib/core/usecases/usecase.dart
@@ -121,6 +158,7 @@ abstract class UseCase<Output, Input> {
 }
 EOT
     log "Created: lib/core/usecases/usecase.dart"
+>>>>>>> origin/main
   fi
 
   if [ ! -f lib/core/utils/constants.dart ]; then
@@ -146,9 +184,19 @@ EOT
 
   # Feature-specific files
   cat <<EOT >$FEATURE_PATH/data/datasources/${FEATURE_NAME}_remote_data_source.dart
+<<<<<<< HEAD
+abstract interface class ${FEATURE_CLASS_NAME}RemoteDataSource {
+  // TODO: Implement remote data source
+}
+
+class ${FEATURE_CLASS_NAME}RemoteDataSourceImpl implements ${FEATURE_CLASS_NAME}RemoteDataSource {
+  
+}
+=======
 class ${FEATURE_CLASS_NAME}RemoteDataSource {
   // TODO: Implement remote data source
 }
+>>>>>>> origin/main
 EOT
   log "Created: $FEATURE_PATH/data/datasources/${FEATURE_NAME}_remote_data_source.dart"
 
@@ -160,7 +208,12 @@ EOT
   log "Created: $FEATURE_PATH/data/models/${FEATURE_NAME}_model.dart"
 
   cat <<EOT >$FEATURE_PATH/data/repositories/${FEATURE_NAME}_repository_impl.dart
+<<<<<<< HEAD
+import '../../domain/repositories/${FEATURE_NAME}_repository.dart';
+class ${FEATURE_CLASS_NAME}RepositoryImpl implements ${FEATURE_CLASS_NAME}Repository {
+=======
 class ${FEATURE_CLASS_NAME}RepositoryImpl {
+>>>>>>> origin/main
   // TODO: Implement repository
 }
 EOT
@@ -174,13 +227,46 @@ EOT
   log "Created: $FEATURE_PATH/domain/entities/${FEATURE_NAME}.dart"
 
   cat <<EOT >$FEATURE_PATH/domain/repositories/${FEATURE_NAME}_repository.dart
+<<<<<<< HEAD
+abstract interface class ${FEATURE_CLASS_NAME}Repository {
+=======
 abstract class ${FEATURE_CLASS_NAME}Repository {
+>>>>>>> origin/main
   // TODO: Define repository methods
 }
 EOT
   log "Created: $FEATURE_PATH/domain/repositories/${FEATURE_NAME}_repository.dart"
 
   cat <<EOT >$FEATURE_PATH/domain/usecases/get_${FEATURE_NAME}.dart
+<<<<<<< HEAD
+  import '../../../../core/errors/failure.dart';
+import '../../../../core/usecase/usecase.dart';
+import 'package:fpdart/fpdart.dart';
+
+class Get${FEATURE_CLASS_NAME} extends UseCase<String, ${FEATURE_CLASS_NAME}Params> {
+  @override
+  Future<Either<Failure, String>> call(${FEATURE_CLASS_NAME}Params params) async {
+    // TODO: implement call
+    throw UnimplementedError();
+  }
+}
+
+class ${FEATURE_CLASS_NAME}Params {
+  final String name;
+  final String email;
+  final String password;
+
+  ${FEATURE_CLASS_NAME}Params(
+      {required this.name, required this.email, required this.password});
+}
+EOT
+  log "Created: $FEATURE_PATH/domain/usecases/get_${FEATURE_NAME}.dart"
+
+  cat <<EOT >$FEATURE_PATH/presentation/bloc/${FEATURE_NAME}_bloc.dart
+import 'package:flutter_bloc/flutter_bloc.dart';
+EOT
+  log "Created: $FEATURE_PATH/presentation/bloc/${FEATURE_NAME}_bloc.dart"
+=======
 import '../../../../core/usecases/usecase.dart';
 
 class Get${FEATURE_CLASS_NAME} extends UseCase<void, void> {
@@ -196,6 +282,7 @@ EOT
 import 'package:flutter_bloc/flutter_bloc.dart';
 EOT
   log "Created: $FEATURE_PATH/presentation/blocs/${FEATURE_NAME}_bloc.dart"
+>>>>>>> origin/main
 
   cat <<EOT >$FEATURE_PATH/presentation/pages/${FEATURE_NAME}_page.dart
 import 'package:flutter/material.dart';
