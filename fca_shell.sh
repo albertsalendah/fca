@@ -44,6 +44,35 @@ log() {
   echo "$NEW_LOG"
 }
 
+# Function to show help information
+show_help() {
+  cat <<EOT 
+Usage:
+  ./fca_shell.sh create <feature_name>   Create a new feature
+  ./fca_shell.sh install                 Install default dependencies
+  ./fca_shell.sh install <dependency>    Install a specific dependency
+  ./fca_shell.sh create assets           Create assets folder with subfolders (icons, images, fonts)
+  ./fca_shell.sh h | help                Show this help message
+  cat fca_shell.log                       View logs
+EOT
+}
+
+# Function to create the assets folder
+create_assets() {
+  ASSETS_PATH="assets"
+  SUBFOLDERS=("icons" "images" "fonts")
+
+  mkdir -p "$ASSETS_PATH"
+  log "Created: $ASSETS_PATH"
+
+  for SUBFOLDER in "${SUBFOLDERS[@]}"; do
+    mkdir -p "$ASSETS_PATH/$SUBFOLDER"
+    log "Created: $ASSETS_PATH/$SUBFOLDER"
+  done
+
+  log "Assets structure created successfully!"
+}
+
 # Function to install dependencies
 install_dependencies() {
   # Default dependencies
@@ -402,20 +431,20 @@ case "$1" in
     install_dependencies "$@"
     ;;
   "create")
-    if [ -z "$2" ]; then
+    if [ "$2" == "assets" ]; then
+      create_assets
+    elif [ -z "$2" ]; then
       log "Error: No feature name provided. Usage: ./fca_shell.sh create <feature_name>"
       exit 1
+    else
+      create_feature "$2"
     fi
-    create_feature "$2"
     ;;
-  ".env")
-    create_env_file
-    ;;
-  "main")
-    modify_main_dart
+  "h"|"help")
+    show_help
     ;;
   *)
-    log "Error: Invalid command. Use './fca_shell.sh create <feature_name>', './fca_shell.sh install [dependencies]', or './fca_shell.sh .env'"
+    log "Error: Invalid command. Use './fca_shell.sh h' for help."
     exit 1
     ;;
 esac
