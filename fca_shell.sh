@@ -862,7 +862,7 @@ class AuthField extends StatelessWidget {
 
 EOT
   log "Created: $FEATURE_PATH/presentation/widgets/auth_field.dart"
-  if [ ! -f lib/init_dependencies.dart ]; then
+  if [ ! -f lib/example_init_dependencies.dart ]; then
   cat <<EOT >lib/example_init_dependencies.dart
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
