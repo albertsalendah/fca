@@ -330,6 +330,8 @@ import '../errors/failure.dart';
 abstract interface class UseCase<Type, Params> {
   Future<Either<Failure, Type>> call(Params params);
 }
+// use this if there is no need for parameters
+class NoParams {}
 EOT
     log "Created: lib/core/usecase/usecase.dart"
   fi  	
@@ -341,18 +343,18 @@ EOT
     log "Created: lib/core/utils/constants.dart"
   fi
 
-  if [ ! -f lib/core/utils/services/dio_service.dart ]; then
-    cat <<EOT >lib/core/utils/services/dio_service.dart
+  if [ ! -f lib/core/network/dio_client.dart ]; then
+    cat <<EOT >lib/core/network/dio_client.dart
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-class DioService {
+class DioClient {
   static final Dio dio = Dio(
     BaseOptions(baseUrl: dotenv.env['API_URL'] ?? ''),
   );
 }
 EOT
-    log "Created: lib/core/utils/services/dio_service.dart"
+    log "Created: lib/core/network/dio_client.dart"
   fi
 
   # DATA FOLDER FILES
@@ -867,7 +869,7 @@ EOT
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'features/${FEATURE_NAME}/data/datasources/auth_remote_data_source.dart';
-import 'core/utils/services/dio_service.dart';
+import 'core/utils/services/dio_client.dart';
 import 'features/${FEATURE_NAME}/data/repositories/auth_repository_impl.dart';
 import 'features/${FEATURE_NAME}/domain/repositories/auth_repository.dart';
 import 'features/${FEATURE_NAME}/presentation/bloc/auth_bloc.dart';
@@ -882,7 +884,7 @@ Future<void> initDependencies() async {
   // assets:
   //   - .env
   await dotenv.load(fileName: ".env");
-  serviceLocator.registerLazySingleton(() => DioService.dio);
+  serviceLocator.registerLazySingleton(() => DioClient.dio);
 }
 
 //Example of dependencies injection
