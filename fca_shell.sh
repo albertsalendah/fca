@@ -430,9 +430,8 @@ class UserModel extends User {
       email: json['email'] ?? '',
     );
   }
-}
 
-UserModel copyWith({
+  UserModel copyWith({
     String? id,
     String? email,
     String? name,
@@ -443,6 +442,7 @@ UserModel copyWith({
       name: name ?? this.name,
     );
   }
+}
 EOT
   log "Created: $FEATURE_PATH/data/models/user_model.dart"
 
