@@ -880,13 +880,13 @@ EOT
   cat <<EOT >lib/core/example_init_dependencies.dart
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
-import 'features/${FEATURE_NAME}/data/datasources/auth_remote_data_source.dart';
-import 'core/utils/services/dio_client.dart';
-import 'features/${FEATURE_NAME}/data/repositories/auth_repository_impl.dart';
-import 'features/${FEATURE_NAME}/domain/repositories/auth_repository.dart';
-import 'features/${FEATURE_NAME}/presentation/bloc/auth_bloc.dart';
-import '/features/${FEATURE_NAME}/domain/usecases/user_sign_in.dart';
-import '/features/${FEATURE_NAME}/domain/usecases/user_sign_up.dart';
+import '../features/example/data/datasources/auth_remote_data_source.dart';
+import '../features/example/data/repositories/auth_repository_impl.dart';
+import '../features/example/domain/repositories/auth_repository.dart';
+import '../features/example/presentation/bloc/auth_bloc.dart';
+import '/features/example/domain/usecases/user_sign_in.dart';
+import '/features/example/domain/usecases/user_sign_up.dart';
+import 'network/dio_client.dart';
 
 final serviceLocator = GetIt.instance;
 
