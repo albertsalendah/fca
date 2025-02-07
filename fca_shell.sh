@@ -114,7 +114,7 @@ create_feature(){
   "lib/core/errors"
   "lib/core/network"
 	"lib/core/usecase"
-    "lib/core/utils/services"
+  "lib/core/utils/services"
     "$FEATURE_PATH/data/datasources"
     "$FEATURE_PATH/data/models"
     "$FEATURE_PATH/data/repositories"
@@ -131,8 +131,8 @@ create_feature(){
     log "Created: $FOLDER"
   done
 
-  if [ ! -f lib/init_dependencies.dart ]; then
-   cat <<EOT >lib/init_dependencies.dart
+  if [ ! -f lib/core/init_dependencies.dart ]; then
+   cat <<EOT >lib/core/init_dependencies.dart
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 
@@ -143,7 +143,7 @@ Future<void> initDependencies() async {
 }
 
 EOT
-  log "Created: lib/init_dependencies.dart"
+  log "Created: lib/core/init_dependencies.dart"
   fi
 
   log "Feature structure for '$FEATURE_NAME' created successfully!"
@@ -165,7 +165,7 @@ create_example() {
   "lib/core/errors"
   "lib/core/network"
 	"lib/core/usecase"
-    "lib/core/utils/services"
+  "lib/core/utils/services"
     "$FEATURE_PATH/data/datasources"
     "$FEATURE_PATH/data/models"
     "$FEATURE_PATH/data/repositories"
@@ -431,6 +431,18 @@ class UserModel extends User {
     );
   }
 }
+
+UserModel copyWith({
+    String? id,
+    String? email,
+    String? name,
+  }) {
+    return UserModel(
+      id: id ?? this.id,
+      email: email ?? this.email,
+      name: name ?? this.name,
+    );
+  }
 EOT
   log "Created: $FEATURE_PATH/data/models/user_model.dart"
 
@@ -864,8 +876,8 @@ class AuthField extends StatelessWidget {
 
 EOT
   log "Created: $FEATURE_PATH/presentation/widgets/auth_field.dart"
-  if [ ! -f lib/example_init_dependencies.dart ]; then
-  cat <<EOT >lib/example_init_dependencies.dart
+  if [ ! -f lib/core/example_init_dependencies.dart ]; then
+  cat <<EOT >lib/core/example_init_dependencies.dart
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'features/${FEATURE_NAME}/data/datasources/auth_remote_data_source.dart';
@@ -918,7 +930,7 @@ void _initAuth() {
     ); // using registerLazySingleton because bloc only need to create one instance
 }
 EOT
-  log "Created: lib/example_init_dependencies.dart"
+  log "Created: lib/core/example_init_dependencies.dart"
   fi
 
   log "Example folder structure and files created successfully!"
@@ -957,7 +969,7 @@ modify_main_dart() {
 import 'package:flutter/material.dart';
 import 'config/routes/routes.dart';
 import 'config/theme/theme.dart';
-import 'init_dependencies.dart';
+import 'core/init_dependencies.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() async {
