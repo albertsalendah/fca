@@ -113,6 +113,8 @@ create_feature(){
   "lib/core/common/entities"
   "lib/core/errors"
   "lib/core/network"
+  "lib/core/constants"
+  "lib/core/di"
 	"lib/core/usecase"
   "lib/core/utils/services"
     "$FEATURE_PATH/data/datasources"
@@ -131,10 +133,28 @@ create_feature(){
     log "Created: $FOLDER"
   done
 
-  if [ ! -f lib/core/init_dependencies.dart ]; then
-   cat <<EOT >lib/core/init_dependencies.dart
+  if [ ! -f lib/core/constants/constants.dart ]; then
+   cat <<EOT >lib/core/constants/constants.dart
+class Constants{
+}
+EOT
+  log "Created: lib/core/constants/constants.dart"
+  fi
+
+  if [ ! -f lib/core/di/init_dependencies.dart ]; then
+   cat <<EOT >lib/core/di/init_dependencies.dart
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
+
+part 'init_dependencies.main.dart';
+
+EOT
+  log "Created: lib/core/di/init_dependencies.dart"
+  fi
+
+   if [ ! -f lib/core/di/init_dependencies.main.dart ]; then
+   cat <<EOT >lib/core/di/init_dependencies.main.dart
+part of 'init_dependencies.dart';
 
 final serviceLocator = GetIt.instance;
 
@@ -143,7 +163,7 @@ Future<void> initDependencies() async {
 }
 
 EOT
-  log "Created: lib/core/init_dependencies.dart"
+  log "Created: lib/core/di/init_dependencies.main.dart"
   fi
 
   log "Feature structure for '$FEATURE_NAME' created successfully!"
@@ -163,6 +183,8 @@ create_example() {
   "lib/core/common/widgets"
   "lib/core/common/entities"
   "lib/core/errors"
+  "lib/core/constants"
+  "lib/core/di"
   "lib/core/network"
 	"lib/core/usecase"
   "lib/core/utils/services"
@@ -181,6 +203,14 @@ create_example() {
     mkdir -p "$FOLDER"
     log "Created: $FOLDER"
   done
+
+  if [ ! -f lib/core/constants/constants.dart ]; then
+   cat <<EOT >lib/core/constants/constants.dart
+class Constants{
+}
+EOT
+  log "Created: lib/core/constants/constants.dart"
+  fi
 
   # Config files 
   if [ ! -f lib/config/routes/routes.dart ]; then
@@ -876,17 +906,28 @@ class AuthField extends StatelessWidget {
 
 EOT
   log "Created: $FEATURE_PATH/presentation/widgets/auth_field.dart"
-  if [ ! -f lib/core/example_init_dependencies.dart ]; then
-  cat <<EOT >lib/core/example_init_dependencies.dart
+
+  if [ ! -f lib/core/di/example_init_dependencies.dart ]; then
+  cat <<EOT >lib/core/di/example_init_dependencies.dart
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
-import '../features/example/data/datasources/auth_remote_data_source.dart';
-import '../features/example/data/repositories/auth_repository_impl.dart';
-import '../features/example/domain/repositories/auth_repository.dart';
-import '../features/example/presentation/bloc/auth_bloc.dart';
+import '../../features/example/data/datasources/auth_remote_data_source.dart';
+import '../../features/example/data/repositories/auth_repository_impl.dart';
+import '../../features/example/domain/repositories/auth_repository.dart';
+import '../../features/example/presentation/bloc/auth_bloc.dart';
+import '../network/dio_client.dart';
 import '/features/example/domain/usecases/user_sign_in.dart';
 import '/features/example/domain/usecases/user_sign_up.dart';
-import 'network/dio_client.dart';
+
+part 'example_init_dependencies.main.dart';
+
+EOT
+  log "Created: lib/core/di/example_init_dependencies.dart"
+  fi
+
+   if [ ! -f lib/core/di/example_init_dependencies.main.dart ]; then
+  cat <<EOT >lib/core/di/example_init_dependencies.main.dart
+part of 'example_init_dependencies.dart';
 
 final serviceLocator = GetIt.instance;
 
@@ -930,7 +971,7 @@ void _initAuth() {
     ); // using registerLazySingleton because bloc only need to create one instance
 }
 EOT
-  log "Created: lib/core/example_init_dependencies.dart"
+  log "Created: lib/core/di/example_init_dependencies.main.dart"
   fi
 
   log "Example folder structure and files created successfully!"
@@ -969,7 +1010,7 @@ modify_main_dart() {
 import 'package:flutter/material.dart';
 import 'config/routes/routes.dart';
 import 'config/theme/theme.dart';
-import 'core/init_dependencies.dart';
+import 'core/di/init_dependencies.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() async {
