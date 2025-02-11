@@ -109,14 +109,14 @@ create_feature(){
   FOLDERS=(
 	"lib/config/routes"
 	"lib/config/theme"
-  "lib/core/common/widgets"
-  "lib/core/common/entities"
+  "lib/core/shared/widgets"
+  "lib/core/shared/entities"
   "lib/core/errors"
   "lib/core/network"
-  "lib/core/constants"
   "lib/core/di"
 	"lib/core/usecase"
   "lib/core/utils/services"
+  "lib/core/utils/constants"
     "$FEATURE_PATH/data/datasources"
     "$FEATURE_PATH/data/models"
     "$FEATURE_PATH/data/repositories"
@@ -133,12 +133,12 @@ create_feature(){
     log "Created: $FOLDER"
   done
 
-  if [ ! -f lib/core/constants/constants.dart ]; then
-   cat <<EOT >lib/core/constants/constants.dart
+  if [ ! -f lib/core/utils/constants/constants.dart ]; then
+   cat <<EOT >lib/core/utils/constants/constants.dart
 class Constants{
 }
 EOT
-  log "Created: lib/core/constants/constants.dart"
+  log "Created: lib/core/utils/constants/constants.dart"
   fi
 
   if [ ! -f lib/core/di/init_dependencies.dart ]; then
@@ -180,14 +180,14 @@ create_example() {
   FOLDERS=(
 	"lib/config/routes"
 	"lib/config/theme"
-  "lib/core/common/widgets"
-  "lib/core/common/entities"
+  "lib/core/shared/widgets"
+  "lib/core/shared/entities"
   "lib/core/errors"
-  "lib/core/constants"
   "lib/core/di"
   "lib/core/network"
 	"lib/core/usecase"
   "lib/core/utils/services"
+  "lib/core/utils/constants"
     "$FEATURE_PATH/data/datasources"
     "$FEATURE_PATH/data/models"
     "$FEATURE_PATH/data/repositories"
@@ -204,12 +204,12 @@ create_example() {
     log "Created: $FOLDER"
   done
 
-  if [ ! -f lib/core/constants/constants.dart ]; then
-   cat <<EOT >lib/core/constants/constants.dart
+  if [ ! -f lib/core/utils/constants/constants.dart ]; then
+   cat <<EOT >lib/core/utils/constants/constants.dart
 class Constants{
 }
 EOT
-  log "Created: lib/core/constants/constants.dart"
+  log "Created: lib/core/utils/constants/constants.dart"
   fi
 
   # Config files 
@@ -366,11 +366,11 @@ EOT
     log "Created: lib/core/usecase/usecase.dart"
   fi  	
 
-  if [ ! -f lib/core/utils/constants.dart ]; then
-    cat <<EOT >lib/core/utils/constants.dart
+  if [ ! -f lib/core/utils/constants/constants.dart ]; then
+    cat <<EOT >lib/core/utils/constants/constants.dart
 const String test_param_1 = 'test_param_1';
 EOT
-    log "Created: lib/core/utils/constants.dart"
+    log "Created: lib/core/utils/constants/constants.dart"
   fi
 
   if [ ! -f lib/core/network/dio_client.dart ]; then
